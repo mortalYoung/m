@@ -4,19 +4,36 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node __tests__/index.js"
+    "dev": "ts-node src/server.ts",
+    "build": "tsc"
   },
+  "bin": {
+    "m": "bin/m.js"
+  },
+  "files": [
+    "lib",
+    "bin"
+  ],
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@clack/core": "^0.3.2",
+    "@clack/prompts": "^0.6.3",
     "@faker-js/faker": "^7.6.0",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
     "http-proxy": "^1.18.1",
-    "http-proxy-middleware": "^2.0.6"
+    "http-proxy-middleware": "^2.0.6",
+    "picocolors": "^1.0.0"
   },
   "devDependencies": {
-    "morgan": "^1.10.0"
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.17",
+    "@types/morgan": "^1.9.4",
+    "@types/node": "^18.16.0",
+    "morgan": "^1.10.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
   }
 }

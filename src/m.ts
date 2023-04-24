@@ -20,6 +20,11 @@ class M {
 		this.#proxyMap = new Map(Object.entries(proxy));
 	}
 
+	restart(proxyMap: Record<string, Function>, indirect: string) {
+		this.#indirect = indirect;
+		this.#init(proxyMap);
+	}
+
 	async listen(port = 3000) {
 		app.post(
 			"*",

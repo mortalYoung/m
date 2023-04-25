@@ -41,6 +41,15 @@ class M {
 				changeOrigin: true,
 			})
 		);
+
+		// Proxy ALL Get
+		app.get(
+			"*",
+			createProxyMiddleware({
+				target: this.#indirect,
+				changeOrigin: true,
+			})
+		);
 		return new Promise<void>((resolve) => {
 			app.listen(port, "0.0.0.0", () => {
 				resolve();

@@ -5,7 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "dev": "ts-node src/server.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "watch": "tsc --watch"
   },
   "bin": {
     "m": "bin/m.js"

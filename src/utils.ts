@@ -12,6 +12,7 @@ export default function getConfig(): Partial<IConfig> {
 	try {
 		const dir = path.join(process.cwd(), CONFIG);
 		fs.accessSync(dir, fs.constants.F_OK);
+		delete require.cache[require.resolve(dir)];
 		return require(dir);
 	} catch (error) {
 		console.error(error);

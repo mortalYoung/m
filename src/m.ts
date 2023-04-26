@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 
 const app = express();
-app.use(morgan("combined"));
+app.use(morgan("tiny"));
 app.use(bodyParser.json());
 
 class M {
@@ -39,6 +39,11 @@ class M {
 			createProxyMiddleware({
 				target: this.#indirect,
 				changeOrigin: true,
+				logLevel: "debug",
+				onError: function onError(err, req, res) {
+					res.status(500);
+					res.json({ error: "Error when connecting to remote server." });
+				},
 			})
 		);
 

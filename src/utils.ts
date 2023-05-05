@@ -8,12 +8,29 @@ export interface IConfig {
 	redirect: string;
 }
 
-export default function getConfig(): Partial<IConfig> {
+export function getConfigDir() {
+	return path.join(process.cwd(), CONFIG);
+}
+
+export function accessConfigDir() {
 	try {
-		const dir = path.join(process.cwd(), CONFIG);
+		const dir = getConfigDir();
 		fs.accessSync(dir, fs.constants.F_OK);
-		delete require.cache[require.resolve(dir)];
-		return require(dir);
+		return true;
+	} catch (error) {
+		return false;
+	}
+}
+
+export function getConfig(): Partial<IConfig> {
+	try {
+		const dir = getConfigDir();
+		if (accessConfigDir()) {
+			delete require.cache[require.resolve(dir)];
+			return require(dir);
+		}
+
+		return {};
 	} catch (error) {
 		console.error(error);
 		return {};

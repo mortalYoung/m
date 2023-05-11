@@ -1,6 +1,7 @@
 import * as p from "@clack/prompts";
 import color from "picocolors";
 import watch from "node-watch";
+import { parseModule, generateCode, builders } from "magicast";
 import { getConfig, accessConfigDir, CONFIG, getConfigDir } from "./utils";
 import M from "./m";
 import path from "path";
@@ -39,7 +40,7 @@ runExit([
 				this.port = project.port;
 			}
 
-			const config = getConfig();
+			const config = await getConfig();
 
 			if (!config.redirect) {
 				p.cancel(`Please type redirect on ${CONFIG}`);
@@ -47,20 +48,26 @@ runExit([
 			}
 
 			const m = new M(config.proxyMap || {}, config.redirect);
-			m.listen(Number(this.port)).then(() => {
-				p.outro(`Server start at ${color.underline(color.cyan(`http://0.0.0.0:${this.port}`))}`);
+			m.listen(Number(this.port))
+				.then(() => {
+					p.outro(`Server start at ${color.underline(color.cyan(`http://0.0.0.0:${this.port}`))}`);
 
-				p.outro(`Start to listen ${CONFIG} file...`);
-				watch(path.join(process.cwd(), CONFIG), () => {
-					p.outro(color.bgCyan(`${CONFIG} has changed, now restart`));
-					const config = getConfig();
+					p.outro(`Start to listen ${CONFIG} file...`);
+					return new Promise<void>((resolve) => {
+						watch(path.join(process.cwd(), CONFIG), () => {
+							p.outro(color.bgCyan(`${CONFIG} has changed, now restart`));
+							resolve();
+						});
+					});
+				})
+				.then(getConfig)
+				.then((config) => {
 					if (!config.redirect) {
 						p.cancel(`Please type redirect on ${CONFIG}`);
 					} else {
 						m.restart(config.proxyMap || {}, config.redirect);
 					}
 				});
-			});
 		}
 	},
 	class InitCommand extends Command {
@@ -69,15 +76,32 @@ runExit([
 		async execute(): Promise<number | void> {
 			if (accessConfigDir()) throw new Error(`${CONFIG} file already exist!`);
 			const dir = getConfigDir();
-			writeFileSync(
-				dir,
-				`module.exports = {
-	redirect: "",
-	proxyMap: {},
-};
-			`
-			);
-			p.outro(color.green(`${CONFIG} file generated successfully at ${dir}`));
+			const module = parseModule(`import { Mock } from "m";\n\n export default {
+				redirect: 'http://localhost:8080',
+				proxyMap:{
+					'/api/v1/path': (params) => {
+						return {
+							code: 1,
+							data: Mock.MockPagination("1")
+								.length(50)
+								.fill((idx) => {
+									return {
+										id: idx,
+									};
+								})
+								.set(params.currentPage, params.pageSize),
+							message: null
+						}
+					},
+				}
+			}`);
+
+			const { code } = generateCode(module);
+			const prettier = await import("prettier");
+			prettier.resolveConfig(path.join(process.cwd(), ".prettierrc.js")).then((options) => {
+				writeFileSync(dir, prettier.format(code, options || {}));
+				p.outro(color.green(`${CONFIG} file generated successfully at ${dir}`));
+			});
 		}
 	},
 ]);

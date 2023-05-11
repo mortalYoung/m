@@ -1,7 +1,8 @@
 import * as fs from "fs";
 import * as path from "path";
+import { loadFile } from "magicast";
 
-export const CONFIG = "m.config.js";
+export const CONFIG = "m.config.ts";
 
 export interface IConfig {
 	proxyMap: Record<string, Function>;
@@ -22,12 +23,12 @@ export function accessConfigDir() {
 	}
 }
 
-export function getConfig(): Partial<IConfig> {
+export async function getConfig(): Promise<Partial<IConfig>> {
 	try {
 		const dir = getConfigDir();
 		if (accessConfigDir()) {
-			delete require.cache[require.resolve(dir)];
-			return require(dir);
+			const module = await loadFile(dir);
+			return module.exports.default;
 		}
 
 		return {};

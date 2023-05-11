@@ -82,14 +82,13 @@ runExit([
 					'/api/v1/path': (params) => {
 						return {
 							code: 1,
-							data: Mock.MockPagination("1")
-								.length(50)
-								.fill((idx) => {
-									return {
-										id: idx,
-									};
-								})
-								.set(params.currentPage, params.pageSize),
+							data: Mock.MockPagination({
+								key: "/api/v1/path",
+								current: params.currentPage,
+								pageSize: params.pageSize,
+								total: 50,
+								dataType: (idx) => ({ id: idx })
+							}),
 							message: null
 						}
 					},

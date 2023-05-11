@@ -1,5 +1,5 @@
 <p align="center">
-  <div style="font-size: 20px">M</div>
+	M
 </p>
 
 *****

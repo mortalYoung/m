@@ -1,9 +1,11 @@
 <p align="center">
-  <font face="monospace">M</font>
+  <div style="font-size: 20px">M</div>
 </p>
 
+*****
+
 <p align="center">
-Mock Specify Requests But Proxy Others to Server
+	<i>Mock Specify Requests But Proxy Others to Server</i>
 </p>
 
 # Usage

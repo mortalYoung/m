@@ -28,7 +28,7 @@ export async function getConfig(): Promise<Partial<IConfig>> {
 		const dir = getConfigDir();
 		if (accessConfigDir()) {
 			const module = await loadFile(dir);
-			return module.exports.default;
+			return module.exports.default.$args[0];
 		}
 
 		return {};

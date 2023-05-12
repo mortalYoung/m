@@ -76,7 +76,12 @@ runExit([
 		async execute(): Promise<number | void> {
 			if (accessConfigDir()) throw new Error(`${CONFIG} file already exist!`);
 			const dir = getConfigDir();
-			const module = parseModule(`import { Mock, defineConfig } from "m";\n\n export default defineConfig({
+			const module = parseModule(`
+			const { Mock } = require("mmock");
+			/**
+			 * @type {import('mmock').IConfig}
+			 */
+			module.exports = {
 				redirect: 'http://localhost:8080',
 				proxyMap:{
 					'/api/v1/path': (params) => {
@@ -93,7 +98,7 @@ runExit([
 						}
 					},
 				}
-			})`);
+			}`);
 
 			const { code } = generateCode(module);
 			const prettier = await import("prettier");

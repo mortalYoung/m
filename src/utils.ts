@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { loadFile } from "magicast";
 
-export const CONFIG = "m.config.ts";
+export const CONFIG = "m.config.js";
 
 export interface IConfig {
 	proxyMap: Record<string, Function>;

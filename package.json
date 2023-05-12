@@ -1,6 +1,6 @@
 {
   "name": "mmock",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Mock Specify Requests But Proxy Others to Server",
   "main": "lib/index.js",
   "scripts": {

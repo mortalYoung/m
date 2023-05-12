@@ -1,12 +1,13 @@
 {
-  "name": "m",
-  "version": "1.0.0",
-  "description": "",
+  "name": "mmock",
+  "version": "0.0.0",
+  "description": "Mock Specify Requests But Proxy Others to Server",
   "main": "lib/index.js",
   "scripts": {
     "dev": "ts-node src/server.ts",
     "build": "tsc",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "publish": "bumpp && git push"
   },
   "bin": {
     "m": "bin/m.js"
@@ -15,8 +16,13 @@
     "lib",
     "bin"
   ],
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Mock"
+  ],
+  "repository": {
+    "type": "git",
+    "directory": "https://github.com/mortalYoung/m"
+  },
   "license": "ISC",
   "peerDependencies": {
     "prettier": "*"
@@ -40,6 +46,7 @@
     "@types/morgan": "^1.9.4",
     "@types/node": "^18.16.0",
     "@types/prettier": "^2.7.2",
+    "bumpp": "^9.1.0",
     "morgan": "^1.10.0",
     "prettier": "*",
     "ts-node": "^10.9.1",

@@ -1,6 +1,6 @@
 {
   "name": "@mortalyoung/mock",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Mock Specify Requests But Proxy Others to Server",
   "main": "lib/index.js",
   "scripts": {

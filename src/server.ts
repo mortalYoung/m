@@ -77,9 +77,9 @@ runExit([
 			if (accessConfigDir()) throw new Error(`${CONFIG} file already exist!`);
 			const dir = getConfigDir();
 			const module = parseModule(`
-			const { Mock } = require("mmock");
+			const { Mock } = require("@mortalyoung/mock");
 			/**
-			 * @type {import('mmock').IConfig}
+			 * @type {import('@mortalyoung/mock').IConfig}
 			 */
 			module.exports = {
 				redirect: 'http://localhost:8080',

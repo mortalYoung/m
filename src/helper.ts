@@ -21,14 +21,14 @@ class Mock {
 	static MockProject = () => faker.commerce.product();
 	static MockPagination = (rawOp: IMockPagination) => {
 		const op: Required<IMockPagination> = { key: new Date().valueOf().toString(), pageSize: 20, ...rawOp };
-		const { key, current, pageSize, dataType } = op;
+		const { key, current, pageSize, total, dataType } = op;
 		if (cache.has(key)) {
 			const data = cache.get(key);
 			const offset = (current - 1) * pageSize;
 			return data.slice(offset, offset + pageSize);
 		}
 
-		const data = new Array(length).fill(1).map((_, idx) => dataType(idx));
+		const data = new Array(total).fill(1).map((_, idx) => dataType(idx));
 		cache.set(key, data);
 
 		const offset = (current - 1) * pageSize;

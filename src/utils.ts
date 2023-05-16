@@ -1,6 +1,5 @@
 import * as fs from "fs";
 import * as path from "path";
-import { loadFile } from "magicast";
 
 export const CONFIG = "m.config.js";
 
@@ -27,8 +26,9 @@ export async function getConfig(): Promise<Partial<IConfig>> {
 	try {
 		const dir = getConfigDir();
 		if (accessConfigDir()) {
-			const module = await loadFile(dir);
-			return module.exports.default.$args[0];
+			delete require.cache[require.resolve(dir)];
+			const config = require(dir);
+			return config;
 		}
 
 		return {};

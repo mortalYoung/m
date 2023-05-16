@@ -7,7 +7,7 @@
     "dev": "ts-node src/server.ts",
     "build": "tsc",
     "watch": "tsc --watch",
-    "publish": "bumpp && git push"
+    "release": "bumpp && git push"
   },
   "bin": {
     "m": "bin/m.js"

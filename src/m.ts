@@ -58,7 +58,9 @@ class M {
 				return;
 			}
 			const func = this.#proxyMap.get(req.url);
-			res.send(func(req.body));
+			Promise.resolve(func(req.body)).then((values) => {
+				res.send(values);
+			});
 		});
 
 		return new Promise<void>((resolve) => {

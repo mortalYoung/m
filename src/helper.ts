@@ -18,7 +18,16 @@ class Mock {
 		faker.datatype.number({ max, min, precision });
 	static MockBoolean = () => faker.datatype.boolean();
 
+	static MockDateTime = () => faker.date.past().valueOf();
 	static MockProject = () => faker.commerce.product();
+	static MockDescription = () => faker.commerce.productDescription();
+	static MockColumnName = () => faker.database.column();
+	static MockType = () => faker.database.type();
+	static MockSeries = (length: number) => {
+		return (entity: (idx: number) => any) => {
+			return new Array(length).fill(1).map((_, idx) => entity(idx));
+		};
+	};
 	static MockPagination = (rawOp: IMockPagination) => {
 		const op: Required<IMockPagination> = { key: new Date().valueOf().toString(), pageSize: 20, ...rawOp };
 		const { key, current, pageSize, total, dataType } = op;

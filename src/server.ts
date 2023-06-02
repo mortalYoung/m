@@ -12,7 +12,19 @@ runExit([
 	class BootStrap extends Command {
 		static paths: never[][] = [Command.Default];
 		port = Option.String("-p,--port");
-		async execute() {
+
+		private mock: M | undefined;
+
+		private reboot = async () => {
+			const config = await getConfig();
+			if (!config.redirect) {
+				p.cancel(`Please type redirect on ${CONFIG}`);
+			} else {
+				this.mock?.restart(config.proxyMap || {}, config.redirect);
+			}
+		};
+
+		execute = async () => {
 			console.clear();
 
 			p.intro(`${color.bgCyan(color.black(" M for Mocking!"))}`);
@@ -47,28 +59,19 @@ runExit([
 				process.exit(0);
 			}
 
-			const m = new M(config.proxyMap || {}, config.redirect);
-			m.listen(Number(this.port))
+			this.mock = new M(config.proxyMap || {}, config.redirect);
+			this.mock
+				.listen(Number(this.port))
 				.then(() => {
 					p.outro(`Server start at ${color.underline(color.cyan(`http://0.0.0.0:${this.port}`))}`);
-
 					p.outro(`Start to listen ${CONFIG} file...`);
-					return new Promise<void>((resolve) => {
-						chokidar.watch(path.join(process.cwd(), CONFIG)).on("change", () => {
-							p.outro(color.bgCyan(`${CONFIG} has changed, now restart`));
-							resolve();
-						});
+					chokidar.watch(path.join(process.cwd(), CONFIG)).on("change", () => {
+						p.outro(color.bgCyan(`${CONFIG} has changed, now restart`));
+						this.reboot();
 					});
 				})
-				.then(getConfig)
-				.then((config) => {
-					if (!config.redirect) {
-						p.cancel(`Please type redirect on ${CONFIG}`);
-					} else {
-						m.restart(config.proxyMap || {}, config.redirect);
-					}
-				});
-		}
+				.then(this.reboot);
+		};
 	},
 	class InitCommand extends Command {
 		static paths: string[][] = [[`init`]];

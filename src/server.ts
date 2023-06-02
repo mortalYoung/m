@@ -1,6 +1,6 @@
 import * as p from "@clack/prompts";
 import color from "picocolors";
-import watch from "node-watch";
+import chokidar from "chokidar";
 import { parseModule, generateCode, builders } from "magicast";
 import { getConfig, accessConfigDir, CONFIG, getConfigDir } from "./utils";
 import M from "./m";
@@ -54,7 +54,7 @@ runExit([
 
 					p.outro(`Start to listen ${CONFIG} file...`);
 					return new Promise<void>((resolve) => {
-						watch(path.join(process.cwd(), CONFIG), () => {
+						chokidar.watch(path.join(process.cwd(), CONFIG)).on("change", () => {
 							p.outro(color.bgCyan(`${CONFIG} has changed, now restart`));
 							resolve();
 						});

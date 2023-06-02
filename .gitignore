@@ -1,3 +1,15 @@
 node_modules
 *.yaml
 lib
+
+.DS_Store
+
+# files in tests
+tests/.env.local
+tests/.umirc.local.ts
+tests/config/config.local.ts
+tests/src/.umi
+tests/src/.umi-production
+tests/src/.umi-test
+tests/dist
+.swc

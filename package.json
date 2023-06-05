@@ -11,7 +11,8 @@
     "dev": "father dev",
     "build": "father build",
     "prepublishOnly": "father doctor && npm run build",
-    "proxy": "NODE_ENV=development node ./bin/m -p 3000 -r http://localhost:3001"
+    "proxy": "NODE_ENV=development node ./bin/m -p 3000 -r http://localhost:3001",
+    "release": "bumpp --commit --push --tag && npm publish"
   },
   "authors": [],
   "keywords": [
@@ -39,6 +40,7 @@
   "dependencies": {
     "body-parser": "^1.20.2",
     "boxen": "5",
+    "bumpp": "^9.1.0",
     "chalk": "4",
     "chokidar": "^3.5.3",
     "express": "^4.18.2",

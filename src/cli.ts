@@ -8,6 +8,7 @@ import { detectMockFile, esnoMockFile, generateMockFile, watchMockFile } from ".
 import { startExpress } from "./express";
 import proxy from "./proxy";
 
+console.clear();
 console.log(
 	chalk.blueBright(
 		boxen(`M for Mocking(v${pkg.version})`, {
@@ -53,6 +54,12 @@ const parser = yargs(hideBin(process.argv)).options({
 				format: (val: string) => (val.startsWith("http://") ? val : `http://${val}`),
 			})
 		).redirect;
+	}
+
+	const url = new URL(redirect);
+	const LOCAL = ["localhost", "127.0.0.1"];
+	if (url.port === port.toString() && LOCAL.includes(url.hostname)) {
+		console.log(chalk.redBright.bold("💥 Might cause infinite request because of same url!"));
 	}
 
 	const mkPath = detectMockFile();

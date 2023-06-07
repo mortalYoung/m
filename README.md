@@ -68,4 +68,3 @@ Mock.MockPagination({
   dataType: (idx) => ({ id: idx })
 })
 ```
-

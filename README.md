@@ -2,7 +2,7 @@
 	M
 </p>
 
-*****
+---
 
 <p align="center">
 	<i>Mock Specify Requests But Proxy Others to Server</i>
@@ -10,61 +10,14 @@
 
 # Usage
 
-First, generate the config file
 ```shell
-npx m init
+npx m serve -p 3000 -r http://localhost:3001
 ```
-and specify the redirect
-
-Then just
-```shell
-npx m
-# or
-npx m -p 3000
-```
-
-# Options
-
-## Helper
-
-### MockId
 
 ```js
-Mock.MockId()
-```
-
-
-
-### MockNumber
-
-```js
-Mock.MockNumber({ mix: 1, max: 100, precision: 1 })
-```
-
-
-### MockBoolean
-
-```js
-Mock.MockBoolean()
-```
-
-
-
-### MockProject
-
-```js
-Mock.MockProject()
-```
-
-
-### MockPagination
-
-```js
-Mock.MockPagination({
-  key: "/api/v1/path",
-  current: 1,
-  pageSize: 20,
-  total: 50,
-  dataType: (idx) => ({ id: idx })
-})
+// default.mock.js
+Mock.fn('/api/v1/path').mockImplemention({
+  code: 1,
+  data: [],
+});
 ```

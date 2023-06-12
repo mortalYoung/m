@@ -3,18 +3,18 @@ import { createProxyMiddleware } from "http-proxy-middleware";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import proxy from "./proxy";
-import chalk from "chalk";
 import pkg from "../package.json";
+import { highlight, info } from "./utils";
 
 const app = express();
 app.use(
 	morgan((tokens, req, res) => {
 		return [
-			chalk.blueBright.bold(`[${pkg.name}[v${pkg.version}]]:`),
-			chalk.yellowBright.bold(tokens.method(req, res)),
-			chalk.yellowBright.bold(tokens.url(req, res)),
-			chalk.yellowBright.bold(tokens.status(req, res)),
-			chalk.yellowBright.bold("- " + tokens["response-time"](req, res) + " ms"),
+			info(`[${pkg.name}[v${pkg.version}]]:`),
+			highlight(tokens.method(req, res)),
+			highlight(tokens.url(req, res)),
+			highlight(tokens.status(req, res)),
+			highlight("- " + tokens["response-time"](req, res) + " ms"),
 		].join(" ");
 	})
 );
@@ -34,8 +34,8 @@ export function startExpress(port: number, redirect: string) {
 		createProxyMiddleware({
 			target: redirect,
 			changeOrigin: true,
-			logLevel: "debug",
-			proxyTimeout: 10000,
+			logLevel: "silent",
+			proxyTimeout: 10 * 1000,
 			onError: function onError(err, req, res) {
 				res.status(500);
 				res.json({ error: "Error when connecting to remote server." });

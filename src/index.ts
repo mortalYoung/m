@@ -1,4 +1,3 @@
-import chalk from "chalk";
 import proxy from "./proxy";
 import ServeService, { type IService } from "./serve";
 

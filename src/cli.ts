@@ -2,11 +2,13 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import chalk from "chalk";
 import prompts from "prompts";
+import ora from "ora";
 import boxen from "boxen";
 import pkg from "../package.json";
 import { detectMockFile, esnoMockFile, generateMockFile, watchMockFile } from "./mockService";
 import { startExpress } from "./express";
 import proxy from "./proxy";
+import { highlight, success, warn } from "./utils";
 
 console.clear();
 console.log(
@@ -33,6 +35,7 @@ const parser = yargs(hideBin(process.argv)).options({
 	const argv = await parser.argv;
 	let port = argv.port;
 	let redirect = argv.redirect;
+	const spinner = ora("Checking Config...").start();
 	if (Number.isNaN(argv.port)) {
 		port = (
 			await prompts({
@@ -59,7 +62,7 @@ const parser = yargs(hideBin(process.argv)).options({
 	const url = new URL(redirect);
 	const LOCAL = ["localhost", "127.0.0.1"];
 	if (url.port === port.toString() && LOCAL.includes(url.hostname)) {
-		console.log(chalk.redBright.bold("💥 Might cause infinite request because of same url!"));
+		console.log(warn("💥 Might cause infinite request because of same url!"));
 	}
 
 	const mkPath = detectMockFile();
@@ -72,18 +75,20 @@ const parser = yargs(hideBin(process.argv)).options({
 		});
 		if (value) {
 			generateMockFile();
-			console.log(chalk.green(`generate successful at ${detectMockFile()}`));
+			console.log(success(`generate successful at ${detectMockFile()}`));
 		}
 	}
 
 	const watcher = watchMockFile();
 	watcher.on("ready", async () => {
-		console.log(chalk.yellowBright(`Start listening...`));
+		spinner.text = "Config Check Completion!";
+		spinner.succeed();
+		console.log(highlight(`Start listening...`));
 		await esnoMockFile();
 		startExpress(port, redirect);
 	});
 	watcher.on("change", async () => {
-		console.log(chalk.yellowBright("Mock File Changed!"));
+		console.log(highlight("Mock File Changed!"));
 		proxy.clear();
 		await esnoMockFile();
 	});

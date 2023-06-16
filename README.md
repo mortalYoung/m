@@ -5,7 +5,7 @@
 ---
 
 <p align="center">
-	<i>Mock Specify Requests But Proxy Others to Server</i>
+	<i>Mock Specify Requests But Proxy Others to Server，Mock Data Like Jest</i>
 </p>
 
 # Usage
@@ -21,3 +21,9 @@ Mock.fn('/api/v1/path').mockImplemention({
   data: [],
 });
 ```
+
+## Options
+|  属性   | 描述  |
+|  ----  | ----  |
+| `-p`  | 端口 |
+| `-r`  | 重定向 URL，不需要 Mock 的接口会重定向到该地址 |

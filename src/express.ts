@@ -35,7 +35,7 @@ export function startExpress(port: number, redirect: string) {
 			target: redirect,
 			changeOrigin: true,
 			logLevel: "silent",
-			proxyTimeout: 10 * 1000,
+			proxyTimeout: 60 * 1000,
 			onError: function onError(err, req, res) {
 				res.status(500);
 				res.json({ error: "Error when connecting to remote server." });

@@ -1,5 +1,6 @@
 import proxy from "./proxy";
 import ServeService, { type IService } from "./serve";
+import * as helper from "./helper";
 
 class InitialService {
 	static fn = (path: string) => {
@@ -38,5 +39,6 @@ class InitialService {
 	};
 }
 
-export const Mock = InitialService;
+const Mock = InitialService;
+export { Mock, helper };
 export type { InitialService };

@@ -39,6 +39,7 @@
     "father": "^4.2.0"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.0.2",
     "body-parser": "^1.20.2",
     "boxen": "5",
     "bumpp": "^9.1.0",

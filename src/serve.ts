@@ -11,60 +11,64 @@ export interface IService {
 	mockResolvedValueOnce: (mock: IMock | IMockFunction, delay?: number) => IService;
 	mockRejectedValue: (mock: IMock | IMockFunction, delay?: number) => IService;
 	mockRejectedValueOnce: (mock: IMock | IMockFunction, delay?: number) => IService;
+	skip: () => void;
 }
 
 export default class ServeService implements IService {
 	implements: ImplementsList[] = [];
 
+	skip = () => {
+		this.implements.length = 0;
+		Object.freeze(this.implements);
+	};
+
 	mockRejectedValueOnce: (mock: any, delay?: number | undefined) => IService = (mocker, delay = 300) => {
-		this.mockImplementationOnce((params: any) => {
+		return this.mockImplementationOnce((params: any) => {
 			return new Promise((_, reject) => {
 				setTimeout(() => {
 					reject(typeof mocker === "function" ? mocker(params) : mocker);
 				}, delay);
 			});
 		});
-		return this;
 	};
 
 	mockRejectedValue: (mock: any, delay?: number | undefined) => IService = (mocker, delay = 300) => {
-		this.mockImplementation((params: any) => {
+		return this.mockImplementation((params: any) => {
 			return new Promise((_, reject) => {
 				setTimeout(() => {
 					reject(typeof mocker === "function" ? mocker(params) : mocker);
 				}, delay);
 			});
 		});
-		return this;
 	};
 
 	mockResolvedValueOnce: (mock: any, delay?: number | undefined) => IService = (mocker, delay = 300) => {
-		this.mockImplementationOnce((params: any) => {
+		return this.mockImplementationOnce((params: any) => {
 			return new Promise((resolve) => {
 				setTimeout(() => {
 					resolve(typeof mocker === "function" ? mocker(params) : mocker);
 				}, delay);
 			});
 		});
-		return this;
 	};
 
 	mockResolvedValue: (mock: any, delay?: number) => IService = (mocker, delay = 300) => {
-		this.mockImplementation((params: any) => {
+		return this.mockImplementation((params: any) => {
 			return new Promise((resolve) => {
 				setTimeout(() => {
 					resolve(typeof mocker === "function" ? mocker(params) : mocker);
 				}, delay);
 			});
 		});
-		return this;
 	};
 
 	mockImplementation: (mocker: IMock | IMockFunction) => IService = (mocker) => {
-		this.implements.push({
-			count: Number.MAX_SAFE_INTEGER,
-			mocker: typeof mocker !== "function" ? () => mocker : mocker,
-		});
+		if (!Object.isFrozen(this.implements)) {
+			this.implements.push({
+				count: Number.MAX_SAFE_INTEGER,
+				mocker: typeof mocker !== "function" ? () => mocker : mocker,
+			});
+		}
 		return this;
 	};
 
@@ -75,10 +79,12 @@ export default class ServeService implements IService {
 			);
 		}
 
-		this.implements.push({
-			count: 1,
-			mocker: typeof mocker !== "function" ? () => mocker : mocker,
-		});
+		if (!Object.isFrozen(this.implements)) {
+			this.implements.push({
+				count: 1,
+				mocker: typeof mocker !== "function" ? () => mocker : mocker,
+			});
+		}
 		return this;
 	};
 }

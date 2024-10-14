@@ -3,7 +3,7 @@ import ServeService, { type IService } from "./serve";
 import * as helper from "./helper";
 
 class InitialService {
-	static fn = (path: string) => {
+	static fn = (path: string): Omit<IService, "implements"> => {
 		const serve = new ServeService();
 		const instance = new InitialService(path, serve);
 		proxy.set(path, instance);
@@ -12,13 +12,11 @@ class InitialService {
 	constructor(public path: string, public serve: IService) {}
 
 	public getCurrentImplementation = () => {
-		// @ts-ignore
-		return (this.serve.implements as ImplementsList[]).at(0);
+		return this.serve.implements.at(0);
 	};
 
 	public shiftFirstImplementation = () => {
-		// @ts-ignore
-		(this.serve.implements as ImplementsList[]).shift();
+		this.serve.implements.shift();
 	};
 
 	public applyImplementation = () => {

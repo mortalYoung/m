@@ -2,9 +2,11 @@ import chalk from "chalk";
 
 type IMock = any;
 type IMockFunction = (params: any) => IMock | Promise<IMock>;
-type ImplementsList = { count: number; mocker: IMockFunction };
+type ImplementsList = { count: number; sse: boolean; mocker: IMockFunction };
 
 export interface IService {
+	implements: ImplementsList[];
+	mockImplementationSSE: (mock: IMock | IMockFunction) => void;
 	mockImplementation: (mock: IMock | IMockFunction) => IService;
 	mockImplementationOnce: (mock: IMock | IMockFunction) => IService;
 	mockResolvedValue: (mock: IMock | IMockFunction, delay?: number) => IService;
@@ -62,10 +64,21 @@ export default class ServeService implements IService {
 		});
 	};
 
+	mockImplementationSSE: (mock: IMock | IMockFunction) => void = (mocker) => {
+		if (!Object.isFrozen(this.implements)) {
+			this.implements.push({
+				count: Number.MAX_SAFE_INTEGER,
+				sse: true,
+				mocker: typeof mocker !== "function" ? () => mocker : mocker,
+			});
+		}
+	};
+
 	mockImplementation: (mocker: IMock | IMockFunction) => IService = (mocker) => {
 		if (!Object.isFrozen(this.implements)) {
 			this.implements.push({
 				count: Number.MAX_SAFE_INTEGER,
+				sse: false,
 				mocker: typeof mocker !== "function" ? () => mocker : mocker,
 			});
 		}
@@ -82,6 +95,7 @@ export default class ServeService implements IService {
 		if (!Object.isFrozen(this.implements)) {
 			this.implements.push({
 				count: 1,
+				sse: true,
 				mocker: typeof mocker !== "function" ? () => mocker : mocker,
 			});
 		}

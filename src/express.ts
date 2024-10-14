@@ -60,9 +60,41 @@ export function startExpress(port: number, redirect: string) {
 			return;
 		}
 		func.applyImplementation();
-		Promise.resolve(impl.mocker(req.body)).then((values) => {
-			res.send(values);
-		});
+		if (!impl.sse) {
+			Promise.resolve(impl.mocker(req.body)).then((values) => {
+				res.send(values);
+			});
+		} else {
+			// SSE
+			res.setHeader("Cache-Control", "no-cache");
+			res.setHeader("Content-Type", "text/event-stream");
+			res.setHeader("Access-Control-Allow-Origin", "*");
+			res.setHeader("Connection", "keep-alive");
+			res.setHeader("Content-Encoding", "none");
+			res.flushHeaders(); // flush the headers to establish SSE with client
+
+			const text: string = impl.mocker(req.body);
+			let pointer = 0;
+			let offset = Math.floor(Math.random() * 80 + 20);
+			res.write(`data: ${encodeURIComponent(text.slice(pointer, pointer + offset))}\n\n`);
+			pointer += offset;
+			let timeout = setInterval(() => {
+				offset = Math.floor(Math.random() * 80 + 20);
+				res.write(`data: ${encodeURIComponent(text.slice(pointer, pointer + offset))}\n\n`);
+				pointer += offset;
+
+				if (pointer >= text.length) {
+					clearInterval(timeout);
+					res.end();
+				}
+			}, 200);
+
+			// If client closes connection, stop sending events
+			res.on("close", () => {
+				clearInterval(timeout);
+				res.end();
+			});
+		}
 	});
 
 	return new Promise<void>((resolve) => {

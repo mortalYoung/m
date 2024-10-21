@@ -73,25 +73,34 @@ export function startExpress(port: number, redirect: string) {
 			res.setHeader("Content-Encoding", "none");
 			res.flushHeaders(); // flush the headers to establish SSE with client
 
-			const text: string = impl.mocker(req.body);
-			let pointer = 0;
-			let offset = Math.floor(Math.random() * 80 + 20);
-			res.write(`data: ${encodeURIComponent(text.slice(pointer, pointer + offset))}\n\n`);
-			pointer += offset;
-			let timeout = setInterval(() => {
-				offset = Math.floor(Math.random() * 80 + 20);
-				res.write(`data: ${encodeURIComponent(text.slice(pointer, pointer + offset))}\n\n`);
-				pointer += offset;
-
-				if (pointer >= text.length) {
-					clearInterval(timeout);
-					res.end();
+			const text = impl.mocker(req.body);
+			const timeouts: NodeJS.Timeout[] = [];
+			if (typeof text === "string") {
+				res.write(`data: ${encodeURIComponent(text)}\n\n`);
+				res.write("[DONE]");
+				res.end();
+			} else if (Array.isArray(text)) {
+				for (let index = 0; index < text.length; index++) {
+					const txt = text[index];
+					const delay = (index + 1) * 500;
+					timeouts.push(
+						setTimeout(() => {
+							res.write(`data: ${encodeURIComponent(txt)}\n\n`);
+							if (index === text.length - 1) {
+								res.write("[DONE]");
+								res.end();
+							}
+						}, delay)
+					);
 				}
-			}, 200);
+			} else {
+				res.write("[DONE]");
+				res.end();
+			}
 
 			// If client closes connection, stop sending events
 			res.on("close", () => {
-				clearInterval(timeout);
+				timeouts.forEach((t) => clearTimeout(t));
 				res.end();
 			});
 		}

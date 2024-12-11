@@ -19,6 +19,8 @@ app.use(
 	})
 );
 
+app.use(express.text());
+
 export function startExpress(port: number, redirect: string) {
 	app.all(
 		"*",
@@ -46,7 +48,7 @@ export function startExpress(port: number, redirect: string) {
 		}
 	);
 
-	app.post("*", bodyParser.json(), (req, res) => {
+	app.post("*", (req, res) => {
 		if (!proxy.has(req.url)) {
 			res.status(500);
 			res.json({ error: "Error when proxy to remote server." });
@@ -61,7 +63,11 @@ export function startExpress(port: number, redirect: string) {
 		}
 		func.applyImplementation();
 		if (!impl.sse) {
-			Promise.resolve(impl.mocker(req.body)).then((values) => {
+			let body = req.body;
+			try {
+				body = JSON.parse(req.body);
+			} catch (error) {}
+			Promise.resolve(impl.mocker(body)).then((values) => {
 				res.send(values);
 			});
 		} else {

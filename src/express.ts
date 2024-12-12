@@ -19,8 +19,6 @@ app.use(
 	})
 );
 
-app.use(express.text());
-
 export function startExpress(port: number, redirect: string) {
 	app.all(
 		"*",
@@ -48,7 +46,7 @@ export function startExpress(port: number, redirect: string) {
 		}
 	);
 
-	app.post("*", (req, res) => {
+	app.post("*", express.text(), (req, res) => {
 		if (!proxy.has(req.url)) {
 			res.status(500);
 			res.json({ error: "Error when proxy to remote server." });
